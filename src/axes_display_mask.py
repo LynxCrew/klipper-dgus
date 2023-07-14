@@ -102,7 +102,7 @@ class AxesDisplayMask(Mask):
             self.perform_move(keycode)
 
         if self.is_keycode_a_home_key(keycode):
-            self.perform_homing()
+            self.perform_homing(keycode)
 
         if keycode == KeyCodes.Z_TILT:
             self.logger.debug("Z-Tilt pressed...")
@@ -180,16 +180,39 @@ class AxesDisplayMask(Mask):
 
         return is_a_home_key
 
-    def perform_homing(self):
-        home_cmd = {
-            "jsonrpc": "2.0",
-            "method": "printer.gcode.script",
-            "params": {
-                "script": 'M18 X Y Z\n G28',
-                                
-            },
-            "id": WebsocktRequestId.TURN_MOTORS_OFF_CMD
-        }
+    def perform_homing(self, keycode):
+        if keycode == KeyCodes.HomeAll:
+            home_cmd = {
+                "jsonrpc": "2.0",
+                "method": "printer.gcode.script",
+                "params": {
+                    "script": 'M18 X Y Z\n G28',
+                                    
+                },
+                "id": WebsocktRequestId.TURN_MOTORS_OFF_CMD
+            }
+
+        if keycode == KeyCodes.HomeXY:
+            home_cmd = {
+                "jsonrpc": "2.0",
+                "method": "printer.gcode.script",
+                "params": {
+                    "script": 'M18 X Y Z\n G28 X Y',
+                                    
+                },
+                "id": WebsocktRequestId.TURN_MOTORS_OFF_CMD
+            }
+
+        if keycode == KeyCodes.HomeZ:
+            home_cmd = {
+                "jsonrpc": "2.0",
+                "method": "printer.gcode.script",
+                "params": {
+                    "script": 'M18 X Y Z\n G28 Z',
+                                    
+                },
+                "id": WebsocktRequestId.TURN_MOTORS_OFF_CMD
+            }
 
         req = MoonrakerRequest(
             request_was_send_callback=self.homing_request_send,
